@@ -170,8 +170,8 @@ exports.createToken = async (req, res, next) => {
   // 컨트렉트, Web3 오브젝트
   const { nftContract, web3 } = req;
 
-  // 파라미터 (PRIVATE_KEY, tokenURI)
-  const { PRIVATE_KEY, tokenURI = "" } = req.body;
+  // 파라미터 (privateKey, tokenURI)
+  const { privateKey, tokenURI = "" } = req.body;
 
   // 트렌젝션 파라미터
   const from = req.body.sender;
@@ -194,7 +194,7 @@ exports.createToken = async (req, res, next) => {
   // 트렌젝션 생성
   const signedTransaction = await web3.eth.accounts.signTransaction(
     transaction,
-    PRIVATE_KEY,
+    privateKey,
     (error, result) => {
       if (!error) {
         console.log("Transaction Result ::: " + result);
@@ -258,7 +258,7 @@ exports.approve = async (req, res, next) => {
   // ...
 
   // 개인키
-  const PRIVATE_KEY = req.body.privateKey;
+  const privateKey = req.body.privateKey;
 
   // 파라미터
   const { sender, approveAddress, tokenId } = req.body;
@@ -284,7 +284,7 @@ exports.approve = async (req, res, next) => {
   // 트렌젝션 생성 (권한 허용)
   const signedTransaction = await web3.eth.accounts.signTransaction(
     transaction,
-    PRIVATE_KEY,
+    privateKey,
     (error, result) => {
       if (!error) {
         console.log("Transaction Result ::: " + result);
@@ -338,24 +338,81 @@ exports.getApproved = async (req, res, next) => {
 //                          safeTransferFrom -> 토큰 전송
 /*********************************************************************************/
 exports.safeTransferFrom = async (req, res, next) => {
-  const { nftContract } = req;
+  const { nftContract, web3 } = req;
 
   // 파라미터
   const {
-    PRIVATE_KEY,
+    privateKey,
+    sender,
     fromAddress,
     toAddress,
     tokenId,
     callData = "",
   } = req.body;
 
-  try {
-    await nftContract.methods.safeTransferFrom(from, to, tokenId, data).call();
-  } catch (error) {
-    res.send(error);
+  // 트렌젝션 파라미터
+  const from = sender;
+  const to = ContractAddress;
+  const gas = web3.utils.toHex("300000");
+  const gasLimit = web3.utils.toHex("3000000");
+  const nonce = await web3.eth.getTransactionCount(from, "latest");
+
+  let data;
+
+  // EOA 전송
+  if (callData === "") {
+    data = nftContract.methods
+      .safeTransferFrom(fromAddress, toAddress, tokenId)
+      .encodeABI();
+  }
+  // CA 전송
+  else {
+    data = nftContract.methods
+      .safeTransferFrom(fromAddress, toAddress, tokenId, callData)
+      .encodeABI();
   }
 
-  res.send({ result });
+  // 트렌젝션 객체
+  const transaction = {
+    from,
+    to,
+    gas,
+    gasLimit,
+    nonce,
+    data,
+  };
+
+  // 트렌젝션 생성 (권한 허용)
+  const signedTransaction = await web3.eth.accounts.signTransaction(
+    transaction,
+    privateKey,
+    (error, result) => {
+      if (!error) {
+        console.log("Transaction Result ::: ");
+        console.log(result);
+      } else {
+        console.log("Transaction Error ::: " + error);
+        res.send(error);
+      }
+    }
+  );
+
+  // 트렌젝션 전송
+  const transactionReceipt = await web3.eth.sendSignedTransaction(
+    signedTransaction.rawTransaction,
+    (error, hash) => {
+      if (!error) {
+        console.log("Transaction Hash ::: " + hash);
+      } else {
+        console.log("Transaction Error ::: " + error);
+        res.send(error);
+      }
+    }
+  );
+
+  console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
+
+  res.send({ transactionReceipt });
 };
 
 /*********************************************************************************/

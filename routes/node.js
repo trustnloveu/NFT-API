@@ -41,6 +41,9 @@ router.post("/createAccount", nodeController.createAccount);
 // POST : /approve
 router.post("/approve", nodeController.approve);
 
+// POST : /safeTransferFrom
+router.post("/safeTransferFrom", nodeController.safeTransferFrom);
+
 // GET : /getToken/[uuid]
 // router.get("/getToken/:productId", shopController.getProductDetail);
 
