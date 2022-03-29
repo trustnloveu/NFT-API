@@ -32,6 +32,9 @@ router.get("/allTokens", nodeController.allTokens);
 // GET : /getApproved
 router.get("/getApproved", nodeController.getApproved);
 
+// GET : /isApprovedForAll
+router.get("/isApprovedForAll", nodeController.isApprovedForAll);
+
 // POST : /createToken
 router.post("/createToken", nodeController.createToken);
 
@@ -43,6 +46,9 @@ router.post("/approve", nodeController.approve);
 
 // POST : /safeTransferFrom
 router.post("/safeTransferFrom", nodeController.safeTransferFrom);
+
+// POST : /setApprovalForAll
+router.post("/setApprovalForAll", nodeController.setApprovalForAll);
 
 // GET : /getToken/[uuid]
 // router.get("/getToken/:productId", shopController.getProductDetail);

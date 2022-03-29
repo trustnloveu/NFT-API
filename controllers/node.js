@@ -181,6 +181,9 @@ exports.createToken = async (req, res, next) => {
   const nonce = await web3.eth.getTransactionCount(from, "latest");
   const data = nftContract.methods.createToken(tokenURI).encodeABI();
 
+  // 파라미터 Null 체크
+  // ...
+
   // 트렌젝션 객체
   const transaction = {
     from,
@@ -197,7 +200,8 @@ exports.createToken = async (req, res, next) => {
     privateKey,
     (error, result) => {
       if (!error) {
-        console.log("Transaction Result ::: " + result);
+        console.log("Transaction Result ::: ");
+        console.log(result);
       } else {
         console.log("Transaction Error ::: " + error);
         res.send(error);
@@ -271,6 +275,9 @@ exports.approve = async (req, res, next) => {
   const nonce = await web3.eth.getTransactionCount(from, "latest");
   const data = nftContract.methods.approve(approveAddress, tokenId).encodeABI();
 
+  // 파라미터 Null 체크
+  // ...
+
   // 트렌젝션 객체
   const transaction = {
     from,
@@ -287,7 +294,8 @@ exports.approve = async (req, res, next) => {
     privateKey,
     (error, result) => {
       if (!error) {
-        console.log("Transaction Result ::: " + result);
+        console.log("Transaction Result ::: ");
+        console.log(result);
       } else {
         console.log("Transaction Error ::: " + error);
         res.send(error);
@@ -359,18 +367,21 @@ exports.safeTransferFrom = async (req, res, next) => {
 
   let data;
 
-  // EOA 전송
+  // EOA 전송 ABI 코드
   if (callData === "") {
     data = nftContract.methods
       .safeTransferFrom(fromAddress, toAddress, tokenId)
       .encodeABI();
   }
-  // CA 전송
+  // CA 전송 ABI 코드
   else {
     data = nftContract.methods
       .safeTransferFrom(fromAddress, toAddress, tokenId, callData)
       .encodeABI();
   }
+
+  // 파라미터 Null 체크
+  // ...
 
   // 트렌젝션 객체
   const transaction = {
@@ -416,13 +427,95 @@ exports.safeTransferFrom = async (req, res, next) => {
 };
 
 /*********************************************************************************/
-//                          burn -> 토큰 소각
-/*********************************************************************************/
-
-/*********************************************************************************/
 //                          setApprovalForAll ->
 /*********************************************************************************/
+exports.setApprovalForAll = async (req, res, next) => {
+  const { nftContract, web3 } = req;
+
+  // 파라미터
+  const { privateKey, sender, operator, approved } = req.body;
+
+  // 트렌젝션 파라미터
+  const from = sender;
+  const to = ContractAddress;
+  const gas = web3.utils.toHex("300000");
+  const gasLimit = web3.utils.toHex("3000000");
+  const nonce = await web3.eth.getTransactionCount(from, "latest");
+  const data = nftContract.methods
+    .setApprovalForAll(operator, approved)
+    .encodeABI();
+
+  // 파라미터 Null 체크
+  // ...
+
+  // 트렌젝션 객체
+  const transaction = {
+    from,
+    to,
+    gas,
+    gasLimit,
+    nonce,
+    data,
+  };
+
+  // 트렌젝션 생성 (권한 허용)
+  const signedTransaction = await web3.eth.accounts.signTransaction(
+    transaction,
+    privateKey,
+    (error, result) => {
+      if (!error) {
+        console.log("Transaction Result ::: ");
+        console.log(result);
+      } else {
+        console.log("Transaction Error ::: " + error);
+        res.send(error);
+      }
+    }
+  );
+
+  // 트렌젝션 전송
+  const transactionReceipt = await web3.eth.sendSignedTransaction(
+    signedTransaction.rawTransaction,
+    (error, hash) => {
+      if (!error) {
+        console.log("Transaction Hash ::: " + hash);
+      } else {
+        console.log("Transaction Error ::: " + error);
+        res.send(error);
+      }
+    }
+  );
+
+  console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
+
+  res.send({ transactionReceipt });
+};
 
 /*********************************************************************************/
 //                          isApprovedForAll ->
+/*********************************************************************************/
+exports.isApprovedForAll = async (req, res, next) => {
+  const { nftContract } = req;
+
+  // 토큰 ID
+  const { tokenOwner, operator } = req.body;
+
+  // 파라미터 Null 체크
+  // ...
+
+  // 권환 확인
+  let result;
+  try {
+    result = await nftContract.methods
+      .isApprovedForAll(tokenOwner, operator)
+      .call(); // null = 0x0000000000000000000000000000000000000000
+  } catch (error) {
+    res.send(error);
+  }
+
+  res.send({ result });
+};
+
+/*********************************************************************************/
+//                          burn -> 토큰 소각 (컨트렉트에 토큰 소각 코드 추가 안되어있음)
 /*********************************************************************************/
