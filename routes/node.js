@@ -14,38 +14,29 @@ router.get("/totalSupply", nodeController.totalSupply);
 // GET : /balanceOf
 router.get("/balanceOf", nodeController.balanceOf);
 
+// GET : /ownerOf/:tokenId
+router.get("/ownerOf/:tokenId", nodeController.ownerOf);
+
+// GET : /tokenURI/:tokenId
+router.get("/tokenURI/:tokenId", nodeController.tokenURI);
+
+// GET : /tokenByIndex/:tokenIdex
+router.get("/tokenByIndex/:tokenIndex", nodeController.tokenByIndex);
+
+// GET : /tokenOfOwnerByIndex
+router.get("/tokenOfOwnerByIndex", nodeController.tokenOfOwnerByIndex);
+
+// GET : /allTokens
+router.get("/allTokens", nodeController.allTokens);
+
 // POST : /createToken
 router.post("/createToken", nodeController.createToken);
 
-// POST : /createToken
+// POST : /createAccount
 router.post("/createAccount", nodeController.createAccount);
 
-// GET : /products
-// router.get("/products", shopController.getProducts);
-
-// GET : /products/delete
-// router.get("/products/delete", shopController.getProductDetail);
-
-// GET : /products/[uuid]
-// router.get("/products/:productId", shopController.getProductDetail);
-
-// GET : /cart
-// router.get("/cart", shopController.getCart);
-
-// POST : /cart
-// router.post("/cart", shopController.postCart);
-
-// POST} : /cart-delete-item
-// router.post("/cart-delete-item", shopController.postCartDelete);
-
-// GET : /orders
-// router.get("/orders", shopController.getOrders);
-
-// GET : /checkout
-// router.get("/checkout", shopController.getCheckout);
-
-// POST : /create-order
-// router.post("/create-order", shopController.postOrder);
+// GET : /getToken/[uuid]
+// router.get("/getToken/:productId", shopController.getProductDetail);
 
 //* Export
 module.exports = router;
