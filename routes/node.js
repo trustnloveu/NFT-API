@@ -14,14 +14,14 @@ router.get("/totalSupply", nodeController.totalSupply);
 // GET : /balanceOf
 router.get("/balanceOf", nodeController.balanceOf);
 
-// GET : /ownerOf/:tokenId
-router.get("/ownerOf/:tokenId", nodeController.ownerOf);
+// GET : /ownerOf
+router.get("/ownerOf", nodeController.ownerOf);
 
-// GET : /tokenURI/:tokenId
-router.get("/tokenURI/:tokenId", nodeController.tokenURI);
+// GET : /tokenURI
+router.get("/tokenURI", nodeController.tokenURI);
 
-// GET : /tokenByIndex/:tokenIdex
-router.get("/tokenByIndex/:tokenIndex", nodeController.tokenByIndex);
+// GET : /tokenByIndex
+router.get("/tokenByIndex", nodeController.tokenByIndex);
 
 // GET : /tokenOfOwnerByIndex
 router.get("/tokenOfOwnerByIndex", nodeController.tokenOfOwnerByIndex);
@@ -29,11 +29,17 @@ router.get("/tokenOfOwnerByIndex", nodeController.tokenOfOwnerByIndex);
 // GET : /allTokens
 router.get("/allTokens", nodeController.allTokens);
 
+// GET : /getApproved
+router.get("/getApproved", nodeController.getApproved);
+
 // POST : /createToken
 router.post("/createToken", nodeController.createToken);
 
 // POST : /createAccount
 router.post("/createAccount", nodeController.createAccount);
+
+// POST : /approve
+router.post("/approve", nodeController.approve);
 
 // GET : /getToken/[uuid]
 // router.get("/getToken/:productId", shopController.getProductDetail);

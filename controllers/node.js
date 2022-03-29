@@ -16,7 +16,7 @@ exports.tokenInfo = async (req, res, next) => {
     res.send({ error });
   }
 
-  res.send({ tokenInfo });
+  res.send(tokenInfo);
 };
 
 /*********************************************************************************/
@@ -43,7 +43,7 @@ exports.ownerOf = async (req, res, next) => {
   const { nftContract } = req;
 
   let owner;
-  const tokenId = req.params.tokenId;
+  const { tokenId } = req.body;
 
   try {
     owner = await nftContract.methods.ownerOf(tokenId).call();
@@ -61,10 +61,10 @@ exports.balanceOf = async (req, res, next) => {
   const { nftContract } = req;
 
   let balanceOf;
-  const address = req.body.sender;
+  const { sender } = req.body.sender;
 
   try {
-    balanceOf = await nftContract.methods.balanceOf(address).call();
+    balanceOf = await nftContract.methods.balanceOf(sender).call();
   } catch (error) {
     res.send({ error });
   }
@@ -79,7 +79,7 @@ exports.tokenURI = async (req, res, next) => {
   const { nftContract } = req;
 
   let tokenURI;
-  const tokenId = req.params.tokenId;
+  const { tokenId } = req.body;
 
   try {
     tokenURI = await nftContract.methods.tokenURI(tokenId).call();
@@ -97,7 +97,7 @@ exports.tokenByIndex = async (req, res, next) => {
   const { nftContract } = req;
 
   let tokenId;
-  const tokenIndex = req.params.tokenIndex;
+  const { tokenIndex } = req.body;
 
   try {
     tokenId = await nftContract.methods.tokenByIndex(tokenIndex).call();
@@ -115,8 +115,7 @@ exports.tokenOfOwnerByIndex = async (req, res, next) => {
   const { nftContract } = req;
 
   let tokenId;
-  const tokenIndex = req.body.tokenIndex;
-  const tokenOwner = req.body.tokenOwner;
+  const { tokenIndex, tokenOwner } = req.body;
 
   try {
     tokenId = await nftContract.methods
@@ -135,16 +134,23 @@ exports.tokenOfOwnerByIndex = async (req, res, next) => {
 exports.allTokens = async (req, res, next) => {
   const { nftContract } = req;
 
+  // 전체 토큰 리스트
   const tokenList = [];
 
   try {
-    const map = {};
+    // 총 발행량 -> for문 연결
     const totalSupply = await nftContract.methods.totalSupply().call();
 
+    // totalSupply 값을 수정해서 페이징 구현 가능
+    // ...
+
     for (let i = 0; i < totalSupply; i++) {
+      // 토큰 ID, Owner Address
       const tokenId = await nftContract.methods.tokenByIndex(i).call();
       const tokenOwner = await nftContract.methods.ownerOf(tokenId).call();
 
+      // 리스트에 추가될 Map
+      const map = {};
       map.tokenId = tokenId;
       map.tokenOwner = tokenOwner;
 
@@ -164,11 +170,8 @@ exports.createToken = async (req, res, next) => {
   // 컨트렉트, Web3 오브젝트
   const { nftContract, web3 } = req;
 
-  // 개인키
-  const PRIVATE_KEY = req.body.privateKey;
-
-  // 토큰 URI 파라미터
-  const TOKEN_URI = req.body.tokenURI ? req.body.tokenURI : "";
+  // 파라미터 (PRIVATE_KEY, tokenURI)
+  const { PRIVATE_KEY, tokenURI = "" } = req.body;
 
   // 트렌젝션 파라미터
   const from = req.body.sender;
@@ -176,7 +179,7 @@ exports.createToken = async (req, res, next) => {
   const gas = web3.utils.toHex("300000");
   const gasLimit = web3.utils.toHex("3000000");
   const nonce = await web3.eth.getTransactionCount(from, "latest");
-  const data = nftContract.methods.createToken(TOKEN_URI).encodeABI();
+  const data = nftContract.methods.createToken(tokenURI).encodeABI();
 
   // 트렌젝션 객체
   const transaction = {
@@ -233,7 +236,97 @@ exports.createAccount = async (req, res, next) => {
   // 계정 생성(address, private key)
   let result;
   try {
-    result = await web3.eth.accounts.create(randomHex);
+    result = await web3.eth.accounts.create(randomHex); // address, private key 반환
+  } catch (error) {
+    res.send(error);
+  }
+
+  // Private Key 암호화 (선택) -> web3.eth.accounts.encrypt(privateKey, password);
+  // ...
+
+  res.send({ result });
+};
+
+/*********************************************************************************/
+//                          approve -> 다른 사람에게 토큰 소유권 허용
+/*********************************************************************************/
+exports.approve = async (req, res, next) => {
+  // Web3 오브젝트
+  const { nftContract, web3 } = req;
+
+  // owner == to 예외처리
+  // ...
+
+  // 개인키
+  const PRIVATE_KEY = req.body.privateKey;
+
+  // 파라미터
+  const { sender, approveAddress, tokenId } = req.body;
+
+  // 트렌젝션 파라미터
+  const from = sender;
+  const to = ContractAddress;
+  const gas = web3.utils.toHex("300000");
+  const gasLimit = web3.utils.toHex("3000000");
+  const nonce = await web3.eth.getTransactionCount(from, "latest");
+  const data = nftContract.methods.approve(approveAddress, tokenId).encodeABI();
+
+  // 트렌젝션 객체
+  const transaction = {
+    from,
+    to,
+    gas,
+    gasLimit,
+    nonce,
+    data,
+  };
+
+  // 트렌젝션 생성 (권한 허용)
+  const signedTransaction = await web3.eth.accounts.signTransaction(
+    transaction,
+    PRIVATE_KEY,
+    (error, result) => {
+      if (!error) {
+        console.log("Transaction Result ::: " + result);
+      } else {
+        console.log("Transaction Error ::: " + error);
+        res.send(error);
+      }
+    }
+  );
+
+  // 트렌젝션 전송
+  const transactionReceipt = await web3.eth.sendSignedTransaction(
+    signedTransaction.rawTransaction,
+    (error, hash) => {
+      if (!error) {
+        console.log("Transaction Hash ::: " + hash);
+      } else {
+        console.log("Transaction Error ::: " + error);
+        res.send(error);
+      }
+    }
+  );
+
+  console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
+
+  res.send({ transactionReceipt });
+};
+
+/*********************************************************************************/
+//                          getApproved -> 토큰 소유권 확인 (소유자가 아닌 제 3자)
+/*********************************************************************************/
+exports.getApproved = async (req, res, next) => {
+  // Web3 오브젝트
+  const { nftContract } = req;
+
+  // 토큰 ID
+  const { tokenId } = req.body;
+
+  // 권한 허용
+  let result;
+  try {
+    result = await nftContract.methods.getApproved(tokenId).call(); // null = 0x0000000000000000000000000000000000000000
   } catch (error) {
     res.send(error);
   }
@@ -242,13 +335,37 @@ exports.createAccount = async (req, res, next) => {
 };
 
 /*********************************************************************************/
-//                          approve -> 토큰 소유권 권한 설정
-/*********************************************************************************/
-
-/*********************************************************************************/
 //                          safeTransferFrom -> 토큰 전송
 /*********************************************************************************/
+exports.safeTransferFrom = async (req, res, next) => {
+  const { nftContract } = req;
+
+  // 파라미터
+  const {
+    PRIVATE_KEY,
+    fromAddress,
+    toAddress,
+    tokenId,
+    callData = "",
+  } = req.body;
+
+  try {
+    await nftContract.methods.safeTransferFrom(from, to, tokenId, data).call();
+  } catch (error) {
+    res.send(error);
+  }
+
+  res.send({ result });
+};
 
 /*********************************************************************************/
 //                          burn -> 토큰 소각
+/*********************************************************************************/
+
+/*********************************************************************************/
+//                          setApprovalForAll ->
+/*********************************************************************************/
+
+/*********************************************************************************/
+//                          isApprovedForAll ->
 /*********************************************************************************/

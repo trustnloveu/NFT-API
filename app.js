@@ -1,7 +1,7 @@
-const path = require("path");
 const Web3 = require("web3");
 const UNFT = require("./truffle_abis/UNFT");
 const ContractAddress = require("./config/nft-address");
+// const path = require("path");
 
 const express = require("express");
 const app = express();
@@ -38,6 +38,7 @@ app.use((req, res, next) => {
 
   req.web3 = web3;
   req.nftContract = nftContract;
+
   next();
 });
 
@@ -87,25 +88,5 @@ app.use(errorController.get404);
 //   });
 
 //* Port
-app.listen(3000);
-
-/*********************************************/
-// const express = require("express");
-// const app = express();
-
-// // logging | routing | connecting to DB
-// require("./startup/logging");
-// require("./startup/routes")(app, express);
-// require("./startup/db")(winston);
-// require("./startup/config")();
-// require("./startup/validation")();
-
-// console.log(`현재 실행 환경: ${process.env.NODE_ENV}`);
-
-// // port
-// const port = process.env.PORT || 3000;
-// const server = app.listen(port, () => {
-//   winston.info(`Listening on port ${port}...`);
-// });
-
-// module.exports = server;
+console.log(`현재 실행 환경 ::: ${process.env.NODE_ENV}`);
+app.listen(process.env.PORT || 3000);
