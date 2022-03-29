@@ -10,6 +10,10 @@ const app = express();
 // app.set("view engine", "ejs");
 // app.set("views", "views");
 
+//* Swagger
+const { swaggerUi, specs } = require("./utils/swagger");
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
+
 //* DB -> Sequlize
 // const sequelize = require("./util/db");
 
