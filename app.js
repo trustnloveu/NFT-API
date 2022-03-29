@@ -1,5 +1,7 @@
 const path = require("path");
 const Web3 = require("web3");
+const UNFT = require("./truffle_abis/UNFT");
+const ContractAddress = require("./config/nft-address");
 
 const express = require("express");
 const app = express();
@@ -32,7 +34,10 @@ app.use((req, res, next) => {
 
   if (!web3) res.send("Failed to access Blockchain.");
 
+  const nftContract = new web3.eth.Contract(UNFT.abi, ContractAddress);
+
   req.web3 = web3;
+  req.nftContract = nftContract;
   next();
 });
 

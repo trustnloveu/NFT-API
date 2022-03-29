@@ -5,8 +5,20 @@ const router = express.Router();
 // Controllers
 const nodeController = require("../controllers/node");
 
-// GET : /
-router.get("/tokenInfo", nodeController.getTokenInfo);
+// GET : /tokenInfo
+router.get("/tokenInfo", nodeController.tokenInfo);
+
+// GET : /totalSupply
+router.get("/totalSupply", nodeController.totalSupply);
+
+// GET : /balanceOf
+router.get("/balanceOf", nodeController.balanceOf);
+
+// POST : /createToken
+router.post("/createToken", nodeController.createToken);
+
+// POST : /createToken
+router.post("/createAccount", nodeController.createAccount);
 
 // GET : /products
 // router.get("/products", shopController.getProducts);
