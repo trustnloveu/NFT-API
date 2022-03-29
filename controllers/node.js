@@ -61,10 +61,10 @@ exports.balanceOf = async (req, res, next) => {
   const { nftContract } = req;
 
   let balanceOf;
-  const { sender } = req.body.sender;
+  const { ownerAddress } = req.body.ownerAddress;
 
   try {
-    balanceOf = await nftContract.methods.balanceOf(sender).call();
+    balanceOf = await nftContract.methods.balanceOf(ownerAddress).call();
   } catch (error) {
     res.send({ error });
   }

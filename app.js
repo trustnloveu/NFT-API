@@ -11,7 +11,7 @@ const app = express();
 // app.set("views", "views");
 
 //* Swagger
-const { swaggerUi, specs } = require("./utils/swagger");
+const { swaggerUi, specs } = require("./utils/swagger/swagger");
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 //* DB -> Sequlize
