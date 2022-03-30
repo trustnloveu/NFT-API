@@ -201,19 +201,14 @@ exports.createToken = async (req, res, next) => {
       privateKey,
       (error, result) => {
         if (!error) {
-          console.log("Signed Transaction Result ::: ");
-          console.log(result);
+          console.log("Signed Transaction Result ::: " + result);
         } else {
           console.log("Signed Transaction Error ::: " + error);
         }
       }
     );
-  } catch (error) {
-    return res.send({ error });
-  }
 
-  // 트렌젝션 전송
-  try {
+    // 트렌젝션 전송
     const transactionReceipt = await web3.eth.sendSignedTransaction(
       signedTransaction.rawTransaction,
       (error, hash) => {
@@ -225,6 +220,7 @@ exports.createToken = async (req, res, next) => {
         }
       }
     );
+
     console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
     return res.send({ transactionReceipt });
   } catch (error) {
@@ -266,11 +262,8 @@ exports.approve = async (req, res, next) => {
   // owner == to 예외처리
   // ...
 
-  // 개인키
-  const privateKey = req.body.privateKey;
-
   // 파라미터
-  const { sender, approveAddress, tokenId } = req.body;
+  const { sender, privateKey, approveAddress, tokenId } = req.body;
 
   // 트렌젝션 파라미터
   const from = sender;
@@ -281,6 +274,12 @@ exports.approve = async (req, res, next) => {
   const data = nftContract.methods.approve(approveAddress, tokenId).encodeABI();
 
   // 파라미터 Null 체크
+  // ...
+
+  // 유효 토큰 소유 검증
+  // ...
+
+  // 토큰 소유자 확인
   // ...
 
   // 트렌젝션 객체
@@ -294,36 +293,38 @@ exports.approve = async (req, res, next) => {
   };
 
   // 트렌젝션 생성 (권한 허용)
-  const signedTransaction = await web3.eth.accounts.signTransaction(
-    transaction,
-    privateKey,
-    (error, result) => {
-      if (!error) {
-        console.log("Transaction Result ::: ");
-        console.log(result);
-      } else {
-        console.log("Transaction Error ::: " + error);
-        return res.send({ error });
+  try {
+    const signedTransaction = await web3.eth.accounts.signTransaction(
+      transaction,
+      privateKey,
+      (error, result) => {
+        if (!error) {
+          console.log("Signed Transaction Result ::: " + result);
+        } else {
+          console.log("Signed Transaction Error ::: " + error);
+          return res.send({ error });
+        }
       }
-    }
-  );
+    );
 
-  // 트렌젝션 전송
-  const transactionReceipt = await web3.eth.sendSignedTransaction(
-    signedTransaction.rawTransaction,
-    (error, hash) => {
-      if (!error) {
-        console.log("Transaction Hash ::: " + hash);
-      } else {
-        console.log("Transaction Error ::: " + error);
-        return res.send({ error });
+    // 트렌젝션 전송
+    const transactionReceipt = await web3.eth.sendSignedTransaction(
+      signedTransaction.rawTransaction,
+      (error, hash) => {
+        if (!error) {
+          console.log("Transaction Receipt Hash ::: " + hash);
+        } else {
+          console.log("Transaction Receipt Error ::: " + error);
+          return res.send({ error });
+        }
       }
-    }
-  );
+    );
 
-  console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
-
-  return res.send({ transactionReceipt });
+    console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
+    return res.send({ transactionReceipt });
+  } catch (error) {
+    return res.send({ error });
+  }
 };
 
 /*********************************************************************************/
@@ -343,7 +344,7 @@ exports.getApproved = async (req, res, next) => {
     return res.send({ error });
   }
 
-  // 권한 허용
+  // 권한 확인
   try {
     const isApproved = await nftContract.methods.getApproved(tokenId).call(); // null = 0x0000000000000000000000000000000000000000
 
@@ -409,37 +410,39 @@ exports.safeTransferFrom = async (req, res, next) => {
   };
 
   // 트렌젝션 생성 (권한 허용)
-  const signedTransaction = await web3.eth.accounts.signTransaction(
-    transaction,
-    privateKey,
-    (error, result) => {
-      if (!error) {
-        console.log("Transaction Result ::: ");
-        console.log(result);
-      } else {
-        console.log("Transaction Error ::: " + error);
-        return res.send({ error });
+  try {
+    const signedTransaction = await web3.eth.accounts.signTransaction(
+      transaction,
+      privateKey,
+      (error, result) => {
+        if (!error) {
+          console.log("Signed Transaction Result ::: ");
+          console.log(result);
+        } else {
+          console.log("Signed Transaction Error ::: " + error);
+          return res.send({ error });
+        }
       }
-    }
-  );
+    );
 
-  // 트렌젝션 전송
-  const transactionReceipt = await web3.eth.sendSignedTransaction(
-    signedTransaction.rawTransaction,
-    (error, hash) => {
-      if (!error) {
-        console.log("Transaction Hash ::: " + hash);
-      } else {
-        console.log("Transaction Error ::: " + error);
-        return res.send({ error });
+    // 트렌젝션 전송
+    const transactionReceipt = await web3.eth.sendSignedTransaction(
+      signedTransaction.rawTransaction,
+      (error, hash) => {
+        if (!error) {
+          console.log("Transaction Receipt Hash ::: " + hash);
+        } else {
+          console.log("Transaction Receipt Error ::: " + error);
+          return res.send({ error });
+        }
       }
-    }
-  );
-  console.log(transactionReceipt);
+    );
 
-  console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
-
-  return res.send({ transactionReceipt });
+    console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
+    return res.send({ transactionReceipt });
+  } catch (error) {
+    return res.send({ error });
+  }
 };
 
 /*********************************************************************************/
@@ -475,40 +478,43 @@ exports.setApprovalForAll = async (req, res, next) => {
   };
 
   // 트렌젝션 생성 (권한 허용)
-  const signedTransaction = await web3.eth.accounts.signTransaction(
-    transaction,
-    privateKey,
-    (error, result) => {
-      if (!error) {
-        console.log("Transaction Result ::: ");
-        console.log(result);
-      } else {
-        console.log("Transaction Error ::: " + error);
-        return res.send({ error });
+  try {
+    const signedTransaction = await web3.eth.accounts.signTransaction(
+      transaction,
+      privateKey,
+      (error, result) => {
+        if (!error) {
+          console.log("Transaction Result ::: ");
+          console.log(result);
+        } else {
+          console.log("Transaction Error ::: " + error);
+          return res.send({ error });
+        }
       }
-    }
-  );
+    );
 
-  // 트렌젝션 전송
-  const transactionReceipt = await web3.eth.sendSignedTransaction(
-    signedTransaction.rawTransaction,
-    (error, hash) => {
-      if (!error) {
-        console.log("Transaction Hash ::: " + hash);
-      } else {
-        console.log("Transaction Error ::: " + error);
-        return res.send({ error });
+    // 트렌젝션 전송
+    const transactionReceipt = await web3.eth.sendSignedTransaction(
+      signedTransaction.rawTransaction,
+      (error, hash) => {
+        if (!error) {
+          console.log("Transaction Hash ::: " + hash);
+        } else {
+          console.log("Transaction Error ::: " + error);
+          return res.send({ error });
+        }
       }
-    }
-  );
+    );
 
-  console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
-
-  return res.send({ transactionReceipt });
+    console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
+    return res.send({ transactionReceipt });
+  } catch (error) {
+    return res.send({ error });
+  }
 };
 
 /*********************************************************************************/
-//                          isApprovedForAll ->
+//                          isApprovedForAll -> 오퍼레이터(Operator) 권한 확인
 /*********************************************************************************/
 exports.isApprovedForAll = async (req, res, next) => {
   const { nftContract } = req;

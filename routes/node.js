@@ -257,11 +257,11 @@ router.get(
  *          consumes:
  *            - application/x-www-form-urlencoded
  *          requestBody:
- *              required: false
+ *              required: true
  *              content:
  *                  application/x-www-form-urlencoded:
  *                      schema:
- *                          $ref: "#/components/schemas/createToken"
+ *                          $ref: "#/components/parameters/createToken"
  *          responses:
  *              200:
  *                  description: 토큰 발행 결과
@@ -272,16 +272,90 @@ router.get(
  */
 router.post("/createToken", nodeController.createToken);
 
-// POST : /createAccount
+/**
+ * @swagger
+ *  /createAccount:
+ *      post:
+ *          summary: "계정 생성"
+ *          tags: [POST]
+ *          description: "주소(Addres), 개인키(Private Key) 생성"
+ *          responses:
+ *              200:
+ *                  description: "주소(Addres), 개인키(Private Key) 생성"
+ *                  content:
+ *                      application/x-www-form-urlencoded:
+ *                          schema:
+ *                              $ref: "#/components/schemas/createAccount"
+ */
 router.post("/createAccount", nodeController.createAccount);
 
-// POST : /approve
+/**
+ * @swagger
+ *  /approve:
+ *      post:
+ *          summary: "토큰 소유권 허용"
+ *          tags: [POST]
+ *          description: "토큰 소유권(Approval) 허용"
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: "#/components/parameters/approve"
+ *          responses:
+ *              200:
+ *                  description: "제 3자에게 토큰 소유권 허용"
+ *                  content:
+ *                      application/x-www-form-urlencoded:
+ *                          schema:
+ *                              $ref: "#/components/schemas/result"
+ */
 router.post("/approve", nodeController.approve);
 
-// POST : /safeTransferFrom
+/**
+ * @swagger
+ *  /safeTransferFrom:
+ *      post:
+ *          summary: "토큰 전송"
+ *          tags: [POST]
+ *          description: "토큰 전송"
+ *          requestBody:
+ *              required: false
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: "#/components/parameters/safeTransferFrom"
+ *          responses:
+ *              200:
+ *                  description: "토큰 전송"
+ *                  content:
+ *                      application/x-www-form-urlencoded:
+ *                          schema:
+ *                              $ref: "#/components/schemas/result"
+ */
 router.post("/safeTransferFrom", nodeController.safeTransferFrom);
 
-// POST : /setApprovalForAll
+/**
+ * @swagger
+ *  /setApprovalForAll:
+ *      post:
+ *          summary: "특정 주소 토큰 소유권 허용"
+ *          tags: [POST]
+ *          description: "특정 주소(Operator) 토큰 소유권(Approval) 허용"
+ *          requestBody:
+ *              required: true
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: "#/components/parameters/setApprovalForAll"
+ *          responses:
+ *              200:
+ *                  description: "제 3자에게 토큰 소유권 허용"
+ *                  content:
+ *                      application/x-www-form-urlencoded:
+ *                          schema:
+ *                              $ref: "#/components/schemas/result"
+ */
 router.post("/setApprovalForAll", nodeController.setApprovalForAll);
 
 // GET : /getToken/[uuid]

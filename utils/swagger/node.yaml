@@ -81,16 +81,12 @@ components:
       properties:
         sender:
           type: string
-          description: "토큰 발행 요청자(msg.sender)"
+          description: "주소(Address)"
           example: "0xAb78d42f2C659B5bDeff87FdB227c1508e29623D"
         privateKey:
           type: string
           description: "개인키(Private Key)"
           example: "0x2d5af7250fb0ea8070efaf271954336c5cdf0029754ba156390b3269c9f4f4d1"
-        tokenURI:
-          type: string
-          description: "토큰 URI"
-          example: "http://test.co.kr"
 
   # Reusable path, query, header and cookie parameters
   parameters:
@@ -109,6 +105,90 @@ components:
       type: integer
       description: "토큰 인덱스(Token Index)"
       example: "1"
+    # createToken
+    createToken:
+      type: object
+      properties:
+        sender:
+          type: string
+          description: "토큰 발행 요청자(msg.sender)"
+          example: "0xAb78d42f2C659B5bDeff87FdB227c1508e29623D"
+        privateKey:
+          type: string
+          description: "개인키(Private Key)"
+          example: "0x2d5af7250fb0ea8070efaf271954336c5cdf0029754ba156390b3269c9f4f4d1"
+        tokenURI:
+          type: string
+          description: "토큰 URI"
+          example: "http://test.co.kr"
+    # approve
+    approve:
+      type: object
+      properties:
+        sender:
+          type: string
+          description: "요청자(msg.sender)"
+          example: "0xAb78d42f2C659B5bDeff87FdB227c1508e29623D"
+        privateKey:
+          type: string
+          description: "개인키(Private Key)"
+          example: "0x2d5af7250fb0ea8070efaf271954336c5cdf0029754ba156390b3269c9f4f4d1"
+        approveAddress:
+          type: string
+          description: "토큰 권한 허용 주소"
+          example: "0xfe2e704dFbD6015536f462049588e9e805C80C00"
+        tokenId:
+          type: string
+          description: "토큰 ID"
+          example: "123"
+    # safeTransferFrom
+    safeTransferFrom:
+      type: object
+      properties:
+        privateKey:
+          type: string
+          description: "개인키(Private Key)"
+          example: "0x2d5af7250fb0ea8070efaf271954336c5cdf0029754ba156390b3269c9f4f4d1"
+        sender:
+          type: string
+          description: "요청자(msg.sender)"
+          example: "0xAb78d42f2C659B5bDeff87FdB227c1508e29623D"
+        fromAddress:
+          type: string
+          description: "권한 허용 주소(Address)"
+          example: "0xAb78d42f2C659B5bDeff87FdB227c1508e29623D"
+        toAddress:
+          type: string
+          description: "권한 허용 주소(Address)"
+          example: "0xfe2e704dFbD6015536f462049588e9e805C80C00"
+        tokenId:
+          type: string
+          description: "토큰 ID"
+          example: "123"
+        callData:
+          type: string
+          description: "CallData"
+          example: "call data sample"
+    # setApprovalForAll
+    setApprovalForAll:
+      type: object
+      properties:
+        privateKey:
+          type: string
+          description: "개인키(Private Key)"
+          example: "0x2d5af7250fb0ea8070efaf271954336c5cdf0029754ba156390b3269c9f4f4d1"
+        sender:
+          type: string
+          description: "요청자(msg.sender)"
+          example: "0xAb78d42f2C659B5bDeff87FdB227c1508e29623D"
+        operator:
+          type: string
+          description: "권한 허용 주소(Address)"
+          example: "0xfe2e704dFbD6015536f462049588e9e805C80C00"
+        approved:
+          type: bool
+          description: "설정 권한(true/false)"
+          example: "true"
 
   # Security scheme definitions (see Authentication)
   # securitySchemes:
