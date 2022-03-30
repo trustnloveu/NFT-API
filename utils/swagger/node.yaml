@@ -75,6 +75,22 @@ components:
           type: bool
           description: "true/false"
           example: "true"
+    # createToken
+    createToken:
+      type: object
+      properties:
+        sender:
+          type: string
+          description: "토큰 발행 요청자(msg.sender)"
+          example: "0xAb78d42f2C659B5bDeff87FdB227c1508e29623D"
+        privateKey:
+          type: string
+          description: "개인키(Private Key)"
+          example: "0x2d5af7250fb0ea8070efaf271954336c5cdf0029754ba156390b3269c9f4f4d1"
+        tokenURI:
+          type: string
+          description: "토큰 URI"
+          example: "http://test.co.kr"
 
   # Reusable path, query, header and cookie parameters
   parameters:

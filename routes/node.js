@@ -256,17 +256,19 @@ router.get(
  *          description: "NFT 토큰 발행"
  *          consumes:
  *            - application/x-www-form-urlencoded
- *          produces:
- *            - application/x-www-form-urlencoded
  *          requestBody:
- *
+ *              required: false
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                          $ref: "#/components/schemas/createToken"
  *          responses:
  *              200:
  *                  description: 토큰 발행 결과
  *                  content:
  *                      application/x-www-form-urlencoded:
  *                          schema:
- *                              $ref: "#/components/schemas/result"
+ *                              $ref: "#/components/schemas/createToken"
  */
 router.post("/createToken", nodeController.createToken);
 

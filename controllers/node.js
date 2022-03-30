@@ -171,10 +171,10 @@ exports.createToken = async (req, res, next) => {
   const { nftContract, web3 } = req;
 
   // 파라미터 (privateKey, tokenURI)
-  const { privateKey, tokenURI = "" } = req.body;
+  const { sender, privateKey, tokenURI = "" } = req.body;
 
   // 트렌젝션 파라미터
-  const from = req.body.sender;
+  const from = sender;
   const to = ContractAddress;
   const gas = web3.utils.toHex("300000");
   const gasLimit = web3.utils.toHex("3000000");
@@ -195,36 +195,41 @@ exports.createToken = async (req, res, next) => {
   };
 
   // 트렌젝션 생성
-  const signedTransaction = await web3.eth.accounts.signTransaction(
-    transaction,
-    privateKey,
-    (error, result) => {
-      if (!error) {
-        console.log("Transaction Result ::: ");
-        console.log(result);
-      } else {
-        console.log("Transaction Error ::: " + error);
-        return res.send({ error });
+  try {
+    const signedTransaction = await web3.eth.accounts.signTransaction(
+      transaction,
+      privateKey,
+      (error, result) => {
+        if (!error) {
+          console.log("Signed Transaction Result ::: ");
+          console.log(result);
+        } else {
+          console.log("Signed Transaction Error ::: " + error);
+        }
       }
-    }
-  );
+    );
+  } catch (error) {
+    return res.send({ error });
+  }
 
   // 트렌젝션 전송
-  const transactionReceipt = await web3.eth.sendSignedTransaction(
-    signedTransaction.rawTransaction,
-    (error, hash) => {
-      if (!error) {
-        console.log("Transaction Hash ::: " + hash);
-      } else {
-        console.log("Transaction Error ::: " + error);
-        return res.send({ error });
+  try {
+    const transactionReceipt = await web3.eth.sendSignedTransaction(
+      signedTransaction.rawTransaction,
+      (error, hash) => {
+        if (!error) {
+          console.log("Transaction Receipt Hash ::: " + hash);
+        } else {
+          console.log("Transaction Receipt Error ::: " + error);
+          console.log(error);
+        }
       }
-    }
-  );
-
-  console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
-
-  return res.send({ transactionReceipt });
+    );
+    console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
+    return res.send({ transactionReceipt });
+  } catch (error) {
+    return res.send({ error });
+  }
 };
 
 /*********************************************************************************/
@@ -430,6 +435,7 @@ exports.safeTransferFrom = async (req, res, next) => {
       }
     }
   );
+  console.log(transactionReceipt);
 
   console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
 
