@@ -204,7 +204,7 @@ exports.createToken = async (req, res, next) => {
         console.log(result);
       } else {
         console.log("Transaction Error ::: " + error);
-        return res.send(error);
+        return res.send({ error });
       }
     }
   );
@@ -217,7 +217,7 @@ exports.createToken = async (req, res, next) => {
         console.log("Transaction Hash ::: " + hash);
       } else {
         console.log("Transaction Error ::: " + error);
-        return res.send(error);
+        return res.send({ error });
       }
     }
   );
@@ -242,7 +242,7 @@ exports.createAccount = async (req, res, next) => {
   try {
     result = await web3.eth.accounts.create(randomHex); // address, private key 반환
   } catch (error) {
-    return res.send(error);
+    return res.send({ error });
   }
 
   // Private Key 암호화 (선택) -> web3.eth.accounts.encrypt(privateKey, password);
@@ -298,7 +298,7 @@ exports.approve = async (req, res, next) => {
         console.log(result);
       } else {
         console.log("Transaction Error ::: " + error);
-        return res.send(error);
+        return res.send({ error });
       }
     }
   );
@@ -311,7 +311,7 @@ exports.approve = async (req, res, next) => {
         console.log("Transaction Hash ::: " + hash);
       } else {
         console.log("Transaction Error ::: " + error);
-        return res.send(error);
+        return res.send({ error });
       }
     }
   );
@@ -332,17 +332,24 @@ exports.getApproved = async (req, res, next) => {
   const { tokenId } = req.params;
 
   // 토큰 ID 유효성 검증 (조회)
-  // ...
-
-  // 권한 허용
-  let result;
   try {
-    result = await nftContract.methods.getApproved(tokenId).call(); // null = 0x0000000000000000000000000000000000000000
+    await nftContract.methods.ownerOf(tokenId).call();
   } catch (error) {
-    return res.send(error);
+    return res.send({ error });
   }
 
-  return res.send({ result });
+  // 권한 허용
+  try {
+    const isApproved = await nftContract.methods.getApproved(tokenId).call(); // null = 0x0000000000000000000000000000000000000000
+
+    if (isApproved === "0x0000000000000000000000000000000000000000") {
+      return res.send({ result: false });
+    }
+  } catch (error) {
+    return res.send({ error });
+  }
+
+  return res.send({ result: true });
 };
 
 /*********************************************************************************/
@@ -406,7 +413,7 @@ exports.safeTransferFrom = async (req, res, next) => {
         console.log(result);
       } else {
         console.log("Transaction Error ::: " + error);
-        return res.send(error);
+        return res.send({ error });
       }
     }
   );
@@ -419,7 +426,7 @@ exports.safeTransferFrom = async (req, res, next) => {
         console.log("Transaction Hash ::: " + hash);
       } else {
         console.log("Transaction Error ::: " + error);
-        return res.send(error);
+        return res.send({ error });
       }
     }
   );
@@ -471,7 +478,7 @@ exports.setApprovalForAll = async (req, res, next) => {
         console.log(result);
       } else {
         console.log("Transaction Error ::: " + error);
-        return res.send(error);
+        return res.send({ error });
       }
     }
   );
@@ -484,7 +491,7 @@ exports.setApprovalForAll = async (req, res, next) => {
         console.log("Transaction Hash ::: " + hash);
       } else {
         console.log("Transaction Error ::: " + error);
-        return res.send(error);
+        return res.send({ error });
       }
     }
   );
@@ -501,7 +508,7 @@ exports.isApprovedForAll = async (req, res, next) => {
   const { nftContract } = req;
 
   // 토큰 ID
-  const { tokenOwner, operator } = req.body;
+  const { tokenOwner, operator } = req.params;
 
   // 파라미터 Null 체크
   // ...
@@ -513,7 +520,7 @@ exports.isApprovedForAll = async (req, res, next) => {
       .isApprovedForAll(tokenOwner, operator)
       .call(); // null = 0x0000000000000000000000000000000000000000
   } catch (error) {
-    return res.send(error);
+    return res.send({ error });
   }
 
   return res.send({ result });

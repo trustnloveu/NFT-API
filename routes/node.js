@@ -52,9 +52,8 @@ router.get("/totalSupply", nodeController.totalSupply);
  *            - in: path
  *              name: ownerAddress
  *              content:
- *                  application/x-www-form-urlencoded:
- *                      schema:
- *                         $ref: "#/components/parameters/ownerAddress"
+ *                  schema:
+ *                      $ref: "#/components/parameters/ownerAddress"
  *          responses:
  *              200:
  *                  description: "보유 토큰 수량"
@@ -78,9 +77,8 @@ router.get("/balanceOf/:ownerAddress", nodeController.balanceOf);
  *            - in: path
  *              name: tokenId
  *              content:
- *                  application/x-www-form-urlencoded:
- *                      schema:
- *                         $ref: "#/components/parameters/tokenId"
+ *                  schema:
+ *                      $ref: "#/components/parameters/tokenId"
  *          responses:
  *              200:
  *                  description: "보유 토큰 수량"
@@ -104,9 +102,8 @@ router.get("/ownerOf/:tokenId", nodeController.ownerOf);
  *            - in: path
  *              name: tokenId
  *              content:
- *                  application/x-www-form-urlencoded:
- *                      schema:
- *                         $ref: "#/components/parameters/tokenId"
+ *                  schema:
+ *                      $ref: "#/components/parameters/tokenId"
  *          responses:
  *              200:
  *                  description: "보유 토큰 URI"
@@ -130,9 +127,8 @@ router.get("/tokenURI/:tokenId", nodeController.tokenURI);
  *            - in: path
  *              name: tokenIndex
  *              content:
- *                  application/x-www-form-urlencoded:
- *                      schema:
- *                         $ref: "#/components/parameters/tokenIndex"
+ *                  schema:
+ *                      $ref: "#/components/parameters/tokenIndex"
  *          responses:
  *              200:
  *                  description: 보유 토큰 수량
@@ -156,15 +152,13 @@ router.get("/tokenByIndex/:tokenIndex", nodeController.tokenByIndex);
  *            - in: path
  *              name: tokenOwner
  *              content:
- *                  application/x-www-form-urlencoded:
- *                      schema:
- *                         $ref: "#/components/parameters/ownerAddress"
+ *                  schema:
+ *                      $ref: "#/components/parameters/ownerAddress"
  *            - in: path
  *              name: tokenIndex
  *              content:
- *                  application/x-www-form-urlencoded:
- *                      schema:
- *                         $ref: "#/components/parameters/tokenIndex"
+ *                  schema:
+ *                      $ref: "#/components/parameters/tokenIndex"
  *          responses:
  *              200:
  *                  description: "보유 토큰 수량"
@@ -208,23 +202,72 @@ router.get("/allTokens", nodeController.allTokens);
  *            - in: path
  *              name: tokenId
  *              content:
- *                  application/x-www-form-urlencoded:
- *                      schema:
- *                         $ref: "#/components/parameters/tokenId"
+ *                  schema:
+ *                      $ref: "#/components/parameters/tokenId"
  *          responses:
  *              200:
  *                  description: 보유 토큰 URI
  *                  content:
  *                      application/x-www-form-urlencoded:
  *                          schema:
- *                              $ref: "#/components/schemas/ownerAddress"
+ *                              $ref: "#/components/schemas/result"
  */
 router.get("/getApproved/:tokenId", nodeController.getApproved);
 
-// GET : /isApprovedForAll
-router.get("/isApprovedForAll", nodeController.isApprovedForAll);
+/**
+ * @swagger
+ *  /isApprovedForAll/{tokenOwner}/{operator}:
+ *      get:
+ *          summary: "오퍼레이터(Operator) 권한 확인"
+ *          tags: [GET]
+ *          description: "제 3자 토큰 관리 권한 부여 여부 반환(true/false)"
+ *          consumes:
+ *            - application/x-www-form-urlencoded
+ *          parameters:
+ *            - in: path
+ *              name: tokenOwner
+ *              content:
+ *                  schema:
+ *                      $ref: "#/components/parameters/ownerAddress"
+ *            - in: path
+ *              name: operator
+ *              content:
+ *                  schema:
+ *                      $ref: "#/components/parameters/ownerAddress"
+ *          responses:
+ *              200:
+ *                  description: 보유 토큰 URI
+ *                  content:
+ *                      application/x-www-form-urlencoded:
+ *                          schema:
+ *                              $ref: "#/components/schemas/result"
+ */
+router.get(
+  "/isApprovedForAll/:tokenOwner/:operator",
+  nodeController.isApprovedForAll
+);
 
-// POST : /createToken
+/**
+ * @swagger
+ *  /createToken:
+ *      post:
+ *          summary: "토큰 발행"
+ *          tags: [POST]
+ *          description: "NFT 토큰 발행"
+ *          consumes:
+ *            - application/x-www-form-urlencoded
+ *          produces:
+ *            - application/x-www-form-urlencoded
+ *          requestBody:
+ *
+ *          responses:
+ *              200:
+ *                  description: 토큰 발행 결과
+ *                  content:
+ *                      application/x-www-form-urlencoded:
+ *                          schema:
+ *                              $ref: "#/components/schemas/result"
+ */
 router.post("/createToken", nodeController.createToken);
 
 // POST : /createAccount
