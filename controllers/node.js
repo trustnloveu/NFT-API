@@ -331,6 +331,9 @@ exports.getApproved = async (req, res, next) => {
   // 토큰 ID
   const { tokenId } = req.params;
 
+  // 토큰 ID 유효성 검증 (조회)
+  // ...
+
   // 권한 허용
   let result;
   try {

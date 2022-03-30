@@ -7,7 +7,7 @@ const nodeController = require("../controllers/node");
 
 /**
  * @swagger
- *  /node/tokenInfo:
+ *  /tokenInfo:
  *      get:
  *          summary: "토큰 정보 조회 (이름 & 심볼)"
  *          tags: [GET]
@@ -24,7 +24,7 @@ router.get("/tokenInfo", nodeController.tokenInfo);
 
 /**
  * @swagger
- *  /node/totalSupply:
+ *  /totalSupply:
  *      get:
  *          summary: "토큰 총 발행량"
  *          tags: [GET]
@@ -41,7 +41,7 @@ router.get("/totalSupply", nodeController.totalSupply);
 
 /**
  * @swagger
- *  /node/balanceOf/{ownerAddress}:
+ *  /balanceOf/{ownerAddress}:
  *      get:
  *          summary: "특정 주소 보유 토큰 수량 확인"
  *          tags: [GET]
@@ -67,7 +67,7 @@ router.get("/balanceOf/:ownerAddress", nodeController.balanceOf);
 
 /**
  * @swagger
- *  /node/ownerOf/{tokenId}:
+ *  /ownerOf/{tokenId}:
  *      get:
  *          summary: "토큰 소유자 확인"
  *          tags: [GET]
@@ -93,7 +93,7 @@ router.get("/ownerOf/:tokenId", nodeController.ownerOf);
 
 /**
  * @swagger
- *  /node/tokenURI/{tokenId}:
+ *  /tokenURI/{tokenId}:
  *      get:
  *          summary: "토큰 URI 확인"
  *          tags: [GET]
@@ -119,7 +119,7 @@ router.get("/tokenURI/:tokenId", nodeController.tokenURI);
 
 /**
  * @swagger
- *  /node/tokenByIndex/{tokenIndex}:
+ *  /tokenByIndex/{tokenIndex}:
  *      get:
  *          summary: "토큰 ID 확인 (전체 Index 참조)"
  *          tags: [GET]
@@ -145,7 +145,7 @@ router.get("/tokenByIndex/:tokenIndex", nodeController.tokenByIndex);
 
 /**
  * @swagger
- *  /node/tokenOfOwnerByIndex/{tokenOwner}/{tokenIndex}:
+ *  /tokenOfOwnerByIndex/{tokenOwner}/{tokenIndex}:
  *      get:
  *          summary: "토큰 ID 확인 (지갑 Index 참조)"
  *          tags: [GET]
@@ -180,7 +180,7 @@ router.get(
 
 /**
  * @swagger
- *  /node/allTokens:
+ *  /allTokens:
  *      get:
  *          summary: "전체 토큰 리스트"
  *          tags: [GET]
@@ -197,11 +197,11 @@ router.get("/allTokens", nodeController.allTokens);
 
 /**
  * @swagger
- *  /node/getApproved/{tokenId}:
+ *  /getApproved/{tokenId}:
  *      get:
- *          summary: "제 3자 토큰 소유 권한(Approval) 확인"
+ *          summary: "토큰 소유 권한(Approval) 주소 확인 (제 3자)"
  *          tags: [GET]
- *          description: "제 3자 토큰 소유 권한(Approval) 확인 여부 true/false 반환"
+ *          description: "제 3자 토큰 소유 권한(Approval) 주소값(Address) 반환"
  *          consumes:
  *            - application/x-www-form-urlencoded
  *          parameters:
@@ -217,7 +217,7 @@ router.get("/allTokens", nodeController.allTokens);
  *                  content:
  *                      application/x-www-form-urlencoded:
  *                          schema:
- *                              $ref: "#/components/schemas/tokenURI"
+ *                              $ref: "#/components/schemas/ownerAddress"
  */
 router.get("/getApproved/:tokenId", nodeController.getApproved);
 

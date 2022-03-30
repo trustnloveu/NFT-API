@@ -11,6 +11,11 @@ const options = {
     },
     host: "localhost:3000",
     basePath: "/",
+    servers: [
+      {
+        url: "http://localhost:3000/node",
+      },
+    ],
   },
   apis: ["./routes/*.js", "./utils/swagger/*"],
 };
