@@ -6,112 +6,220 @@ const router = express.Router();
 const nodeController = require("../controllers/node");
 
 /**
- * GET : /tokenInfo
- *
  * @swagger
  *  /node/tokenInfo:
  *      get:
- *          summary: "토큰 정보 조회 (이름, 심볼)"
+ *          summary: "토큰 정보 조회 (이름 & 심볼)"
  *          tags: [GET]
- *          description: 토큰 이름, 심볼 조회
+ *          description: "토큰 이름, 심볼 조회"
  *          responses:
- *              "200":
- *                  description: 토큰 정보(이름, 심볼)
+ *              200:
+ *                  description: "토큰 정보(이름, 심볼)"
  *                  content:
- *                      application/json:
+ *                      application/x-www-form-urlencoded:
  *                          schema:
- *                              type: object
- *                              properties:
- *                                  name:
- *                                      type: string
- *                                      description: "토큰 이름"
- *                                  symbol:
- *                                      type: string
- *                                      description: "토큰 심볼"
+ *                              $ref: "#/components/schemas/tokenInfo"
  */
 router.get("/tokenInfo", nodeController.tokenInfo);
 
 /**
- * GET : /totalSupply
- *
  * @swagger
  *  /node/totalSupply:
  *      get:
  *          summary: "토큰 총 발행량"
  *          tags: [GET]
- *          description: 토큰 총 발행량 조회
+ *          description: "토큰 총 발행량 조회"
  *          responses:
- *              "200":
- *                  description: 토큰 정보(이름, 심볼)
+ *              200:
+ *                  description: "토큰 정보(이름, 심볼)"
  *                  content:
- *                      application/json:
+ *                      application/x-www-form-urlencoded:
  *                          schema:
- *                              type: object
- *                              properties:
- *                                  totalSupply:
- *                                      type: integer
- *                                      description: "토큰 총 발행량"
+ *                              $ref: "#/components/schemas/totalSupply"
  */
 router.get("/totalSupply", nodeController.totalSupply);
 
-// *          parameters:
-// *              - in: path
-// *                name: ownerAddress
-// *                required: true
-// *                description: 조회하고자 하는 주소(Address)
-// *                schema:
-// *                  type: string
 /**
- * GET : /balanceOf
- *
  * @swagger
- *  /node/balanceOf:
+ *  /node/balanceOf/{ownerAddress}:
  *      get:
  *          summary: "특정 주소 보유 토큰 수량 확인"
  *          tags: [GET]
- *          description: 토큰 이름, 심볼 조회
- *          requestBody:
- *              description: 주소(Address)를 전달받아 보유중인 토큰 수량 반환
- *              required: true
+ *          description: "특정 주소 보유 토큰 수량 반환"
+ *          consumes:
+ *            - application/x-www-form-urlencoded
+ *          parameters:
+ *            - in: path
+ *              name: ownerAddress
  *              content:
  *                  application/x-www-form-urlencoded:
  *                      schema:
- *                          type: object
- *                          properties:
- *                              ownerAddress:
- *                                  type: string
- *                                  description: "조회하고자 하는 주소(Owner Address)"
+ *                         $ref: "#/components/parameters/ownerAddress"
  *          responses:
- *              "200":
- *                  description: 특정 주소 보유 토큰 수량 확인
+ *              200:
+ *                  description: "보유 토큰 수량"
  *                  content:
- *                      application/json:
+ *                      application/x-www-form-urlencoded:
  *                          schema:
- *                              type: object
- *                              properties:
- *                                  balanceOf:
- *                                      type: integer
- *                                      description: "보유 토큰 수량"
+ *                              $ref: "#/components/schemas/balanceOf"
  */
-router.get("/balanceOf", nodeController.balanceOf);
+router.get("/balanceOf/:ownerAddress", nodeController.balanceOf);
 
-// GET : /ownerOf
-router.get("/ownerOf", nodeController.ownerOf);
+/**
+ * @swagger
+ *  /node/ownerOf/{tokenId}:
+ *      get:
+ *          summary: "토큰 소유자 확인"
+ *          tags: [GET]
+ *          description: "특정 토큰 소유자 주소 반환"
+ *          consumes:
+ *            - application/x-www-form-urlencoded
+ *          parameters:
+ *            - in: path
+ *              name: tokenId
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                         $ref: "#/components/parameters/tokenId"
+ *          responses:
+ *              200:
+ *                  description: "보유 토큰 수량"
+ *                  content:
+ *                      application/x-www-form-urlencoded:
+ *                          schema:
+ *                              $ref: "#/components/schemas/ownerAddress"
+ */
+router.get("/ownerOf/:tokenId", nodeController.ownerOf);
 
-// GET : /tokenURI
-router.get("/tokenURI", nodeController.tokenURI);
+/**
+ * @swagger
+ *  /node/tokenURI/{tokenId}:
+ *      get:
+ *          summary: "토큰 URI 확인"
+ *          tags: [GET]
+ *          description: "특정 토큰 URI 반환"
+ *          consumes:
+ *            - application/x-www-form-urlencoded
+ *          parameters:
+ *            - in: path
+ *              name: tokenId
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                         $ref: "#/components/parameters/tokenId"
+ *          responses:
+ *              200:
+ *                  description: "보유 토큰 URI"
+ *                  content:
+ *                      application/x-www-form-urlencoded:
+ *                          schema:
+ *                              $ref: "#/components/schemas/tokenURI"
+ */
+router.get("/tokenURI/:tokenId", nodeController.tokenURI);
 
-// GET : /tokenByIndex
-router.get("/tokenByIndex", nodeController.tokenByIndex);
+/**
+ * @swagger
+ *  /node/tokenByIndex/{tokenIndex}:
+ *      get:
+ *          summary: "토큰 ID 확인 (전체 Index 참조)"
+ *          tags: [GET]
+ *          description: "특정 토큰 ID 반환"
+ *          consumes:
+ *            - application/x-www-form-urlencoded
+ *          parameters:
+ *            - in: path
+ *              name: tokenIndex
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                         $ref: "#/components/parameters/tokenIndex"
+ *          responses:
+ *              200:
+ *                  description: 보유 토큰 수량
+ *                  content:
+ *                      application/x-www-form-urlencoded:
+ *                          schema:
+ *                              $ref: "#/components/schemas/tokenId"
+ */
+router.get("/tokenByIndex/:tokenIndex", nodeController.tokenByIndex);
 
-// GET : /tokenOfOwnerByIndex
-router.get("/tokenOfOwnerByIndex", nodeController.tokenOfOwnerByIndex);
+/**
+ * @swagger
+ *  /node/tokenOfOwnerByIndex/{tokenOwner}/{tokenIndex}:
+ *      get:
+ *          summary: "토큰 ID 확인 (지갑 Index 참조)"
+ *          tags: [GET]
+ *          description: "특정 토큰 URI 반환"
+ *          consumes:
+ *            - application/x-www-form-urlencoded
+ *          parameters:
+ *            - in: path
+ *              name: tokenOwner
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                         $ref: "#/components/parameters/ownerAddress"
+ *            - in: path
+ *              name: tokenIndex
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                         $ref: "#/components/parameters/tokenIndex"
+ *          responses:
+ *              200:
+ *                  description: "보유 토큰 수량"
+ *                  content:
+ *                      application/x-www-form-urlencoded:
+ *                          schema:
+ *                              $ref: "#/components/schemas/tokenId"
+ */
+router.get(
+  "/tokenOfOwnerByIndex/:tokenOwner/:tokenIndex",
+  nodeController.tokenOfOwnerByIndex
+);
 
-// GET : /allTokens
+/**
+ * @swagger
+ *  /node/allTokens:
+ *      get:
+ *          summary: "전체 토큰 리스트"
+ *          tags: [GET]
+ *          description: "전체 토큰 리스트 반환"
+ *          responses:
+ *              200:
+ *                  description: "보유 토큰 수량"
+ *                  content:
+ *                      application/x-www-form-urlencoded:
+ *                          schema:
+ *                              $ref: "#/components/schemas/allTokens"
+ */
 router.get("/allTokens", nodeController.allTokens);
 
-// GET : /getApproved
-router.get("/getApproved", nodeController.getApproved);
+/**
+ * @swagger
+ *  /node/getApproved/{tokenId}:
+ *      get:
+ *          summary: "제 3자 토큰 소유 권한(Approval) 확인"
+ *          tags: [GET]
+ *          description: "제 3자 토큰 소유 권한(Approval) 확인 여부 true/false 반환"
+ *          consumes:
+ *            - application/x-www-form-urlencoded
+ *          parameters:
+ *            - in: path
+ *              name: tokenId
+ *              content:
+ *                  application/x-www-form-urlencoded:
+ *                      schema:
+ *                         $ref: "#/components/parameters/tokenId"
+ *          responses:
+ *              200:
+ *                  description: 보유 토큰 URI
+ *                  content:
+ *                      application/x-www-form-urlencoded:
+ *                          schema:
+ *                              $ref: "#/components/schemas/tokenURI"
+ */
+router.get("/getApproved/:tokenId", nodeController.getApproved);
 
 // GET : /isApprovedForAll
 router.get("/isApprovedForAll", nodeController.isApprovedForAll);

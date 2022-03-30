@@ -11,7 +11,7 @@ const app = express();
 // app.set("views", "views");
 
 //* Swagger
-const { swaggerUi, specs } = require("./utils/swagger/swagger");
+const { swaggerUi, specs } = require("./utils/swagger");
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
 
 //* DB -> Sequlize
@@ -27,6 +27,7 @@ const errorController = require("./controllers/error");
 const nodeRoutes = require("./routes/node");
 
 //* Utils
+// app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 // app.use(express.static(path.join(__dirname, "public")));
 
