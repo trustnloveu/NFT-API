@@ -155,11 +155,11 @@ components:
           example: "0xAb78d42f2C659B5bDeff87FdB227c1508e29623D"
         fromAddress:
           type: string
-          description: "권한 허용 주소(Address)"
+          description: "토큰 소유자 주소(from)"
           example: "0xAb78d42f2C659B5bDeff87FdB227c1508e29623D"
         toAddress:
           type: string
-          description: "권한 허용 주소(Address)"
+          description: "권한 전달 주소(to)"
           example: "0xfe2e704dFbD6015536f462049588e9e805C80C00"
         tokenId:
           type: string
