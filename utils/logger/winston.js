@@ -26,6 +26,7 @@ const logFormat = printf((info) => {
 const logger = winston.createLogger({
   defaultMeta: { service: "NFT-Service" },
   format: combine(timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), logFormat), // format: winston.format.json(),
+  json: false, // .json 파일 생성 방지
   transports: [
     // info
     new winstonDaily({
@@ -40,8 +41,8 @@ const logger = winston.createLogger({
     new winstonDaily({
       level: "error",
       datePattern: "YYYY-MM-DD",
-      dirname: errorDir, // logs -> error 디렉토리
-      fileName: `%DATE%.error.log`,
+      dirname: "logs/error", // logs -> error 디렉토리
+      filename: `%DATE%.error.log`,
       zippedArchive: true, // 파일 압축
       // maxFiles: 30, // 최대 30일 로그 파일 저장
     }),
