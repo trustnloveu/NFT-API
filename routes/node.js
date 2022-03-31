@@ -1,8 +1,8 @@
-//* Route > /
+//* Route > /node
 const express = require("express");
 const router = express.Router();
 
-// Controllers
+//* Controllers
 const nodeController = require("../controllers/node");
 
 /**

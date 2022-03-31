@@ -1,10 +1,14 @@
 //* Contract Address
 const ContractAddress = require("../config/nft-address");
 
+//* Logger
+const { logger } = require("../utils/logger/winston");
+
 /*********************************************************************************/
 //                          tokenInfo -> 토큰 이름 & 심볼
 /*********************************************************************************/
 exports.tokenInfo = async (req, res, next) => {
+  console.log(req);
   const { nftContract } = req;
 
   let tokenInfo = {};
@@ -13,6 +17,7 @@ exports.tokenInfo = async (req, res, next) => {
     tokenInfo.name = await nftContract.methods.name().call();
     tokenInfo.symbol = await nftContract.methods.symbol().call();
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 

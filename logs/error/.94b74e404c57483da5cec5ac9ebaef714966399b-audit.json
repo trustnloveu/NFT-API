@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": false,
+        "amount": 30
+    },
+    "auditLog": "logs/error/.94b74e404c57483da5cec5ac9ebaef714966399b-audit.json",
+    "files": [
+        {
+            "date": 1648691521085,
+            "name": "logs/error/winston.log.2022-03-31",
+            "hash": "0180a7c8d64b796766a92f3453c89d6d"
+        }
+    ],
+    "hashType": "md5"
+}

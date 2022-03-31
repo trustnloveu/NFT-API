@@ -10,6 +10,9 @@ const app = express();
 // app.set("view engine", "ejs");
 // app.set("views", "views");
 
+//* Logger
+const { logger } = require("./utils/logger/winston");
+
 //* Swagger
 const { swaggerUi, specs } = require("./utils/swagger");
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs));
@@ -37,13 +40,17 @@ app.use((req, res, next) => {
     Web3.givenProvider || Web3.currentProvider || "http://211.54.150.66:18545"
   );
 
-  if (!web3) res.send("Failed to access Blockchain.");
+  if (!web3) {
+    logger.error("Failed to access Blockchain");
+    res.send("Failed to access Blockchain.");
+  }
 
   const nftContract = new web3.eth.Contract(UNFT.abi, ContractAddress);
 
   req.web3 = web3;
   req.nftContract = nftContract;
 
+  logger.info("Successed to load contract info");
   next();
 });
 
@@ -93,5 +100,7 @@ app.use(errorController.get404);
 //   });
 
 //* Port
-console.log(`현재 실행 환경 ::: ${process.env.NODE_ENV}`);
-app.listen(process.env.PORT || 3000);
+logger.info(`Current Running Environment ::: ${process.env.NODE_ENV}`);
+app.listen(process.env.PORT || 3000, () => {
+  logger.info(`Listening Port ::: ${process.env.PORT || 3000}`);
+});
