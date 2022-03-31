@@ -1,9 +1,12 @@
+// imports
 const winston = require("winston"); // = { createLogger, format, transports } // format = { combine, timestamp, label, prinft }
 const winstonDaily = require("winston-daily-rotate-file");
 
+const { combine, timestamp, printf } = winston.format;
+
+// 로그 파일 경로(info, error)
 const logDir = "logs"; // 'logs' 디렉토리 하위
 const errorDir = "logs/error";
-const { combine, timestamp, printf } = winston.format;
 
 // 로그 포멧 (info => { level, message, label, timestamp } )
 const logFormat = printf((info) => {
@@ -22,8 +25,7 @@ const logFormat = printf((info) => {
  */
 const logger = winston.createLogger({
   defaultMeta: { service: "NFT-Service" },
-  format: combine(timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), logFormat),
-  // format: winston.format.json(),
+  format: combine(timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), logFormat), // format: winston.format.json(),
   transports: [
     // info
     new winstonDaily({
@@ -33,8 +35,7 @@ const logger = winston.createLogger({
       filename: `%DATE%.log`,
       zippedArchive: true, // 파일 압축
       // maxFiles: 30, // 최대 30일 로그 파일 저장
-    }),
-    // .on("rotate", (oldFileName, newFileName) => {}), // new, rotate, archive, logRemoved
+    }), // .on("rotate", (oldFileName, newFileName) => {}), // new, rotate, archive, logRemoved
     // error
     new winstonDaily({
       level: "error",
@@ -51,7 +52,7 @@ const logger = winston.createLogger({
 if (process.env.NODE_ENV !== "production") {
   logger.add(
     new winston.transports.Console({
-      format: winston.format.combine(
+      format: combine(
         winston.format.colorize(), // 색상 적용
         winston.format.simple() // `${info.level}: ${info.message} JSON.stringify({ ...rest })` 포맷으로 출력
       ),
