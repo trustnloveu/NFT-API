@@ -8,6 +8,7 @@ const express = require("express");
 const app = express();
 
 //* Settings
+require("./config/config"); // 프로퍼티
 // app.set("view engine", "ejs");
 // app.set("views", "views");
 
@@ -51,16 +52,17 @@ app.use(express.urlencoded({ extended: false }));
 
 //* Middleware Functions
 app.use((req, res, next) => {
-  const web3 = new Web3(
-    Web3.givenProvider || Web3.currentProvider || "http://192.168.0.111:8545"
-  );
+  const web3 = new Web3(process.env.NODE_RPC); // http://192.168.0.111:8545
 
   if (!web3) {
     logger.error("Failed to access Blockchain");
     res.send("Failed to access Blockchain.");
   }
 
-  const nftContract = new web3.eth.Contract(UNFT.abi, ContractAddress);
+  const nftContract = new web3.eth.Contract(
+    UNFT.abi,
+    process.env.CONTRACT_ADDRESS
+  );
 
   req.web3 = web3;
   req.nftContract = nftContract;

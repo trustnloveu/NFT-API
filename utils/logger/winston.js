@@ -65,6 +65,7 @@ if (process.env.NODE_ENV !== "production") {
   );
 }
 
+// Stream -> HTTP 로깅 (morgan 라이브러리)
 const stream = {
   write: (message) => {
     logger.info(message);
