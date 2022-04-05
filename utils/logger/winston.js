@@ -2,7 +2,7 @@
 const winston = require("winston"); // = { createLogger, format, transports } // format = { combine, timestamp, label, prinft }
 const winstonDaily = require("winston-daily-rotate-file");
 
-const { combine, timestamp, printf } = winston.format;
+const { combine, timestamp, label, printf } = winston.format;
 
 // 로그 파일 경로(info, error)
 const logDir = "logs"; // 'logs' 디렉토리 하위
@@ -10,7 +10,7 @@ const errorDir = "logs/error";
 
 // 로그 포멧 (info => { level, message, label, timestamp } )
 const logFormat = printf((info) => {
-  return `${info.timestamp} [${info.label}] ${info.level} : ${info.message}`;
+  return `[${info.timestamp}] [${info.label}] ${info.level} ::: ${info.message}`;
 });
 
 /**
@@ -24,8 +24,12 @@ const logFormat = printf((info) => {
  *      silly   : 6
  */
 const logger = winston.createLogger({
-  defaultMeta: { service: "NFT-Service" },
-  format: combine(timestamp({ format: "YYYY-MM-DD HH:mm:ss" }), logFormat), // format: winston.format.json(),
+  // defaultMeta: { service: "NFT-Service" },
+  format: combine(
+    timestamp({ format: "YYYY-MM-DD HH:mm:ss" }),
+    label({ label: "NFT-API" }),
+    logFormat
+  ), // format: winston.format.json(),
   json: false, // .json 파일 생성 방지
   transports: [
     // info
@@ -36,12 +40,12 @@ const logger = winston.createLogger({
       filename: `%DATE%.log`,
       zippedArchive: true, // 파일 압축
       // maxFiles: 30, // 최대 30일 로그 파일 저장
-    }), // .on("rotate", (oldFileName, newFileName) => {}), // new, rotate, archive, logRemoved
+    }),
     // error
     new winstonDaily({
       level: "error",
       datePattern: "YYYY-MM-DD",
-      dirname: "logs/error", // logs -> error 디렉토리
+      dirname: errorDir, // logs -> error 디렉토리
       filename: `%DATE%.error.log`,
       zippedArchive: true, // 파일 압축
       // maxFiles: 30, // 최대 30일 로그 파일 저장
@@ -61,4 +65,13 @@ if (process.env.NODE_ENV !== "production") {
   );
 }
 
-module.exports = { logger };
+const stream = {
+  write: (message) => {
+    logger.info(message);
+  },
+};
+
+module.exports = { logger, stream };
+
+// 메모 : winston-daily-rotate-file 설정
+//  new winstonDaily({ ... }).on("rotate", (oldFileName, newFileName) => {}), // new, rotate, archive, logRemoved

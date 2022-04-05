@@ -8,7 +8,6 @@ const { logger } = require("../utils/logger/winston");
 //                          tokenInfo -> 토큰 이름 & 심볼
 /*********************************************************************************/
 exports.tokenInfo = async (req, res, next) => {
-  console.log(req);
   const { nftContract } = req;
 
   let tokenInfo = {};
@@ -16,6 +15,9 @@ exports.tokenInfo = async (req, res, next) => {
   try {
     tokenInfo.name = await nftContract.methods.name().call();
     tokenInfo.symbol = await nftContract.methods.symbol().call();
+    logger.info(
+      `Response -> TokenInfo ::: ${tokenInfo.name}, ${tokenInfo.symbol}`
+    );
   } catch (error) {
     logger.error(`Error ::: ${error}`);
     return res.send({ error });
@@ -34,7 +36,9 @@ exports.totalSupply = async (req, res, next) => {
 
   try {
     totalSupply = await nftContract.methods.totalSupply().call();
+    logger.info(`Response -> Total Subbly ::: ${totalSupply}`);
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 
@@ -49,10 +53,13 @@ exports.ownerOf = async (req, res, next) => {
 
   let owner;
   const { tokenId } = req.params;
+  logger.info(`Param -> Token ID ::: ${tokenId}`);
 
   try {
     owner = await nftContract.methods.ownerOf(tokenId).call();
+    logger.info(`Response -> Token Owner ::: ${owner}`);
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 
@@ -67,10 +74,13 @@ exports.balanceOf = async (req, res, next) => {
 
   let balanceOf;
   const { ownerAddress } = req.params;
+  logger.info(`Param -> Onwer Address ::: ${ownerAddress}`);
 
   try {
     balanceOf = await nftContract.methods.balanceOf(ownerAddress).call();
+    logger.info(`Response -> Total Balance ::: ${balanceOf}`);
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 
@@ -85,10 +95,13 @@ exports.tokenURI = async (req, res, next) => {
 
   let tokenURI;
   const { tokenId } = req.params;
+  logger.info(`Param -> Token ID ${tokenId}`);
 
   try {
     tokenURI = await nftContract.methods.tokenURI(tokenId).call();
+    logger.info(`Response -> Token URI ::: ${tokenURI}`);
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 
@@ -103,10 +116,13 @@ exports.tokenByIndex = async (req, res, next) => {
 
   let tokenId;
   const { tokenIndex } = req.params;
+  logger.info(`Param -> Token Index ${tokenIndex}`);
 
   try {
     tokenId = await nftContract.methods.tokenByIndex(tokenIndex).call();
+    logger.info(`Response -> Token ID ::: ${tokenId}`);
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 
@@ -121,12 +137,15 @@ exports.tokenOfOwnerByIndex = async (req, res, next) => {
 
   let tokenId;
   const { tokenIndex, tokenOwner } = req.params;
+  logger.info(`Param -> Index & Owner ::: ${tokenIndex}, ${tokenOwner}`);
 
   try {
     tokenId = await nftContract.methods
       .tokenOfOwnerByIndex(tokenOwner, tokenIndex)
       .call();
+    logger.info(`Token ID ::: ${tokenId}`);
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 
@@ -162,6 +181,7 @@ exports.allTokens = async (req, res, next) => {
       tokenList.push(map);
     }
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 
@@ -229,6 +249,7 @@ exports.createToken = async (req, res, next) => {
     console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
     return res.send({ transactionReceipt });
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 };
@@ -248,6 +269,7 @@ exports.createAccount = async (req, res, next) => {
   try {
     result = await web3.eth.accounts.create(randomHex); // address, private key 반환
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 
@@ -307,6 +329,7 @@ exports.approve = async (req, res, next) => {
           console.log("Signed Transaction Result ::: " + result);
         } else {
           console.log("Signed Transaction Error ::: " + error);
+          logger.error(`Error ::: ${error}`);
           return res.send({ error });
         }
       }
@@ -320,6 +343,7 @@ exports.approve = async (req, res, next) => {
           console.log("Transaction Receipt Hash ::: " + hash);
         } else {
           console.log("Transaction Receipt Error ::: " + error);
+          logger.error(`Error ::: ${error}`);
           return res.send({ error });
         }
       }
@@ -328,6 +352,7 @@ exports.approve = async (req, res, next) => {
     console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
     return res.send({ transactionReceipt });
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 };
@@ -346,6 +371,7 @@ exports.getApproved = async (req, res, next) => {
   try {
     await nftContract.methods.ownerOf(tokenId).call();
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 
@@ -357,6 +383,7 @@ exports.getApproved = async (req, res, next) => {
       return res.send({ result: false });
     }
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 
@@ -425,6 +452,7 @@ exports.safeTransferFrom = async (req, res, next) => {
           console.log(result);
         } else {
           console.log("Signed Transaction Error ::: " + error);
+          logger.error(`Error ::: ${error}`);
           return res.send({ error });
         }
       }
@@ -438,6 +466,7 @@ exports.safeTransferFrom = async (req, res, next) => {
           console.log("Transaction Receipt Hash ::: " + hash);
         } else {
           console.log("Transaction Receipt Error ::: " + error);
+          logger.error(`Error ::: ${error}`);
           return res.send({ error });
         }
       }
@@ -446,6 +475,7 @@ exports.safeTransferFrom = async (req, res, next) => {
     console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
     return res.send({ transactionReceipt });
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 };
@@ -493,6 +523,7 @@ exports.setApprovalForAll = async (req, res, next) => {
           console.log(result);
         } else {
           console.log("Transaction Error ::: " + error);
+          logger.error(`Error ::: ${error}`);
           return res.send({ error });
         }
       }
@@ -506,6 +537,7 @@ exports.setApprovalForAll = async (req, res, next) => {
           console.log("Transaction Hash ::: " + hash);
         } else {
           console.log("Transaction Error ::: " + error);
+          logger.error(`Error ::: ${error}`);
           return res.send({ error });
         }
       }
@@ -514,6 +546,7 @@ exports.setApprovalForAll = async (req, res, next) => {
     console.log(`Transaction receipt: ${JSON.stringify(transactionReceipt)}`);
     return res.send({ transactionReceipt });
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 };
@@ -537,6 +570,7 @@ exports.isApprovedForAll = async (req, res, next) => {
       .isApprovedForAll(tokenOwner, operator)
       .call(); // null = 0x0000000000000000000000000000000000000000
   } catch (error) {
+    logger.error(`Error ::: ${error}`);
     return res.send({ error });
   }
 

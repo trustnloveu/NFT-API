@@ -1,6 +1,7 @@
 const Web3 = require("web3");
 const UNFT = require("./truffle_abis/UNFT");
 const ContractAddress = require("./config/nft-address");
+const morgan = require("morgan");
 // const path = require("path");
 
 const express = require("express");
@@ -11,7 +12,21 @@ const app = express();
 // app.set("views", "views");
 
 //* Logger
-const { logger } = require("./utils/logger/winston");
+const { logger, stream } = require("./utils/logger/winston");
+
+//* Morgan
+app.use(
+  morgan(
+    (tokens, req, res) => {
+      return [
+        `[${tokens.method(req, res)}]`,
+        `${tokens.url(req, res)}`,
+        `${tokens.status(req, res)}`,
+      ].join(" ");
+    },
+    { stream }
+  )
+);
 
 //* Swagger
 const { swaggerUi, specs } = require("./utils/swagger");
@@ -37,7 +52,7 @@ app.use(express.urlencoded({ extended: false }));
 //* Middleware Functions
 app.use((req, res, next) => {
   const web3 = new Web3(
-    Web3.givenProvider || Web3.currentProvider || "http://211.54.150.66:18545"
+    Web3.givenProvider || Web3.currentProvider || "http://192.168.0.111:8545"
   );
 
   if (!web3) {
